@@ -79,6 +79,9 @@
 
 class CoffeeMachine:
     FILLING_STATES = ["filling water", "filling milk", "filling coffee beans", "filling cups"]
+    COFFEE_SUPPLIES = {"espresso": {"water": 250, "milk": 0, "coffee_beans": 16, "cups": 1, "money": 4},
+                       "latte": {"water": 350, "milk": 75, "coffee_beans": 20, "cups": 1, "money": 7},
+                       "cappuccino": {"water": 200, "milk": 100, "coffee_beans": 12, "cups": 1, "money": 6}}
 
     def __init__(self):
         self.state = ""
@@ -98,27 +101,27 @@ class CoffeeMachine:
               f"{self.supplies['money']} of money")
         self.write_action()
 
-    def modify_supplies(self, water, milk, coffee_beans, cups, money):
-        self.supplies["water"] += water
-        self.supplies["milk"] += milk
-        self.supplies["coffee_beans"] += coffee_beans
-        self.supplies["cups"] += cups
-        self.supplies["money"] += money
+    def modify_supplies(self, coffee_supplies):
+        self.supplies["water"] += coffee_supplies["water"]
+        self.supplies["milk"] += coffee_supplies["milk"]
+        self.supplies["coffee_beans"] += coffee_supplies["coffee_beans"]
+        self.supplies["cups"] += coffee_supplies["cups"]
+        self.supplies["money"] += coffee_supplies["money"]
 
-    def is_enough_resources(self, water, milk, coffee_beans, cups):
-        if self.supplies["water"] <= water:
+    def is_enough_resources(self, ingredients):
+        if self.supplies["water"] <= ingredients["water"]:
             print("Sorry, not enough water!")
             self.write_action()
             return False
-        elif self.supplies["milk"] <= milk:
+        elif self.supplies["milk"] <= ingredients["milk"]:
             print("Sorry, not enough milk!")
             self.write_action()
             return False
-        elif self.supplies["coffee_beans"] <= coffee_beans:
+        elif self.supplies["coffee_beans"] <= ingredients["coffee_beans"]:
             print("Sorry, not enough coffee beans!")
             self.write_action()
             return False
-        elif self.supplies["cups"] <= cups:
+        elif self.supplies["cups"] <= ingredients["cups"]:
             print("Sorry, not enough disposable cups!")
             self.write_action()
             return False
@@ -129,14 +132,14 @@ class CoffeeMachine:
 
     def buy(self, coffee_type):
         if coffee_type == "1":
-            if self.is_enough_resources(250, 0, 16, 1):
-                self.modify_supplies(-250, 0, -16, -1, 4)
+            if self.is_enough_resources(CoffeeMachine.COFFEE_SUPPLIES["espresso"]):
+                self.modify_supplies(CoffeeMachine.COFFEE_SUPPLIES["espresso"])
         elif coffee_type == "2":
-            if self.is_enough_resources(350, 75, 20, 1):
-                self.modify_supplies(-350, -75, -20, -1, 7)
+            if self.is_enough_resources(CoffeeMachine.COFFEE_SUPPLIES["latte"]):
+                self.modify_supplies(CoffeeMachine.COFFEE_SUPPLIES["latte"])
         elif coffee_type == "3":
-            if self.is_enough_resources(200, 100, 12, 1):
-                self.modify_supplies(-200, -100, -12, -1, 6)
+            if self.is_enough_resources(CoffeeMachine.COFFEE_SUPPLIES["cappuccino"]):
+                self.modify_supplies(CoffeeMachine.COFFEE_SUPPLIES["cappuccino"])
         else:
             self.write_action()
 
@@ -185,6 +188,11 @@ class CoffeeMachine:
             self.fill(int(users_input))
 
 
-cm = CoffeeMachine()
-while cm.state != "exit":
-    cm.input(input())
+def main():
+    cm = CoffeeMachine()
+    while cm.state != "exit":
+        cm.input(input())
+
+
+if __name__ == "__main__":
+    main()
